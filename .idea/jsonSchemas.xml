@@ -3,17 +3,17 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
-        <entry key="router_schema">
+        <entry key="mcp_schema">
           <value>
             <SchemaInfo>
               <option name="generatedName" value="New Schema" />
-              <option name="name" value="router_schema" />
-              <option name="relativePathToSchema" value=".apollo/router_config_schema.json" />
+              <option name="name" value="mcp_schema" />
+              <option name="relativePathToSchema" value=".apollo/mcp.config.schema.json" />
               <option name="schemaVersion" value="JSON Schema version 7" />
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="router.yaml" />
+                    <option name="path" value="mcp.yaml" />
                   </Item>
                 </list>
               </option>

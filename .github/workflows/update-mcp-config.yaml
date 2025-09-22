@@ -13,9 +13,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t runtime .
       - name: Update Config JSON Schema
-        run: docker run --rm --entrypoint /opt/router runtime config schema > router_config.schema.json
+        run: docker run --rm --entrypoint /opt/router runtime config schema > mcp.config.schema
       - name: Check if anything changed
-        run: git diff --exit-code .apollo/router_config_schema.json
+        run: git diff --exit-code .apollo/mcp.config.schema
       - name: Commit and push changes
         if: ${{ failure() }}
         run: |

@@ -13,7 +13,7 @@
         "/(^|/)Dockerfile\\.[^/]*$/"
       ],
       "matchStrings": [
-        "(?:^|\\r?\\n)FROM\\s+(?<depName>ghcr\\.io/apollographql/apollo-runtime):(?<currentValue>[^\\s#]+)"
+        "(?:^|\\r?\\n)FROM\\s+(?<depName>ghcr\\.io/apollographql/apollo-mcp-server):(?<currentValue>[^\\s#]+)"
       ],
       "datasourceTemplate": "docker",
       "registryUrlTemplate": "https://ghcr.io",

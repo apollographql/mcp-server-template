@@ -1,0 +1,59 @@
+# Schema and tools are sourced from GraphOS by default
+# APOLLO_KEY and APOLLO_GRAPH_REF env vars must be set
+operations:
+  source: collection
+  id: default
+
+# GraphQL API endpoint to send tool calls to, DEFAULT: http://localhost:4000
+endpoint: http://localhost:4000
+headers:
+  apollographql-client-name: apollo-mcp-server-template
+  apollographql-client-version: 1.0.0
+health_check: 
+  enabled: true
+transport:
+  type: streamable_http
+  address: 127.0.0.1
+  port: 5000
+  # auth:
+  # You can also use environment variables instead of setting this config value: 
+  # APOLLO_MCP_TRANSPORT__AUTH__AUDIENCES, APOLLO_MCP_TRANSPORT__AUTH__RESOURCE, APOLLO_MCP_TRANSPORT__AUTH__SCOPES, APOLLO_MCP_TRANSPORT__AUTH__SERVERS
+  #   servers:
+  #     # Fill in your Auth domain
+  #     - https://<AUTH DOMAIN> 
+  #   audiences:
+  #     # Fill in your Auth Identifier
+  #     - <AUTH DEFAULT AUDIENCE>
+  #   # Fill in the url for the MCP server
+  #   resource: http://127.0.0.1:5000/mcp 
+  #   scopes:
+  #     # Adjust scopes as needed
+  #     - read:users 
+
+# To enable mutation tools, must explicitly override 
+overrides:
+  mutation_mode: none
+
+# Set of tools to help undertsanding the loaded schema  
+introspection:
+  introspect:
+    enabled: true
+    minify: true
+  search:
+    enabled: true
+    minify: true
+  validate:
+    enabled: true
+  execute:
+    enabled: true
+
+# ---If you aren't using GraphOS---
+# Load a set of operations from local files
+# operations:
+#   source: local
+#   paths: 
+#     - tools
+# Load the schema from a local file
+# schema:
+#   source: local
+#   path: schema.graphql

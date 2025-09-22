@@ -1,0 +1,636 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Config",
+  "description": "Configuration for the MCP server",
+  "type": "object",
+  "properties": {
+    "custom_scalars": {
+      "description": "Path to a custom scalar map",
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "endpoint": {
+      "description": "The target GraphQL endpoint",
+      "type": "string",
+      "format": "uri"
+    },
+    "graphos": {
+      "description": "Apollo-specific credential overrides",
+      "$ref": "#/$defs/GraphOSConfig"
+    },
+    "headers": {
+      "description": "List of hard-coded headers to include in all GraphQL requests",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "health_check": {
+      "description": "Health check configuration",
+      "$ref": "#/$defs/HealthCheckConfig",
+      "default": {
+        "enabled": false,
+        "path": "/health",
+        "readiness": {
+          "interval": {
+            "sampling": "5s",
+            "unready": null
+          },
+          "allowed": 100
+        }
+      }
+    },
+    "introspection": {
+      "description": "Introspection configuration",
+      "$ref": "#/$defs/Introspection"
+    },
+    "logging": {
+      "description": "Logging configuration",
+      "$ref": "#/$defs/Logging"
+    },
+    "operations": {
+      "description": "Operations",
+      "$ref": "#/$defs/OperationSource"
+    },
+    "overrides": {
+      "description": "Overrides for server behaviour",
+      "$ref": "#/$defs/Overrides"
+    },
+    "schema": {
+      "description": "The schema to load for operations",
+      "$ref": "#/$defs/SchemaSource"
+    },
+    "transport": {
+      "description": "The type of server transport to use",
+      "$ref": "#/$defs/Transport"
+    }
+  },
+  "$defs": {
+    "GraphOSConfig": {
+      "description": "Credentials to use with GraphOS",
+      "type": "object",
+      "properties": {
+        "apollo_key": {
+          "description": "The apollo key",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "apollo_graph_ref": {
+          "description": "The graph reference",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "apollo_registry_url": {
+          "description": "The URL to use for Apollo's registry",
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "default": null
+        },
+        "apollo_uplink_endpoints": {
+          "description": "List of uplink URL overrides",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "default": []
+        }
+      }
+    },
+    "HealthCheckConfig": {
+      "description": "Configuration options for the health check component.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Set to false to disable the health check",
+          "type": "boolean",
+          "default": false
+        },
+        "path": {
+          "description": "Optionally set a custom healthcheck path\nDefaults to /health",
+          "type": "string",
+          "default": "/health"
+        },
+        "readiness": {
+          "description": "Optionally specify readiness configuration",
+          "$ref": "#/$defs/ReadinessConfig",
+          "default": {
+            "interval": {
+              "sampling": "5s",
+              "unready": null
+            },
+            "allowed": 100
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReadinessConfig": {
+      "description": "Configuration options for the readiness health sub-component.",
+      "type": "object",
+      "properties": {
+        "interval": {
+          "description": "The readiness interval configuration",
+          "$ref": "#/$defs/ReadinessIntervalConfig",
+          "default": {
+            "sampling": "5s",
+            "unready": null
+          }
+        },
+        "allowed": {
+          "description": "How many rejections are allowed in an interval (default: 100)\nIf this number is exceeded, the server will start to report unready.",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0,
+          "default": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReadinessIntervalConfig": {
+      "description": "Configuration options for the readiness health interval sub-component.",
+      "type": "object",
+      "properties": {
+        "sampling": {
+          "description": "The sampling interval (default: 5s)",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "0s"
+        },
+        "unready": {
+          "description": "The unready interval (default: 2 * sampling interval)",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "Introspection": {
+      "description": "Introspection configuration",
+      "type": "object",
+      "properties": {
+        "execute": {
+          "description": "Execution configuration for introspection",
+          "$ref": "#/$defs/ExecuteConfig"
+        },
+        "introspect": {
+          "description": "Introspect configuration for allowing clients to run introspection",
+          "$ref": "#/$defs/IntrospectConfig"
+        },
+        "search": {
+          "description": "Search tool configuration",
+          "$ref": "#/$defs/SearchConfig"
+        },
+        "validate": {
+          "description": "Validate configuration for checking operations before execution",
+          "$ref": "#/$defs/ValidateConfig"
+        }
+      }
+    },
+    "ExecuteConfig": {
+      "description": "Execution-specific introspection configuration",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable introspection for execution",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "IntrospectConfig": {
+      "description": "Introspect-specific introspection configuration",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable introspection requests",
+          "type": "boolean",
+          "default": false
+        },
+        "minify": {
+          "description": "Minify introspection results",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "SearchConfig": {
+      "description": "Search tool configuration",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable search tool",
+          "type": "boolean",
+          "default": false
+        },
+        "index_memory_bytes": {
+          "description": "The amount of memory used for indexing (in bytes)",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0,
+          "default": 50000000
+        },
+        "leaf_depth": {
+          "description": "The depth of subtype information to include from matching types\n(1 is just the matching type, 2 is the matching type plus the types it references, etc.\nDefaults to 1.)",
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0,
+          "default": 1
+        },
+        "minify": {
+          "description": "Minify search results",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "ValidateConfig": {
+      "description": "Validation tool configuration",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable validation tool",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "Logging": {
+      "description": "Logging related options",
+      "type": "object",
+      "properties": {
+        "level": {
+          "description": "The log level to use for tracing",
+          "type": "string",
+          "enum": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ]
+        },
+        "path": {
+          "description": "The output path to use for logging",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "rotation": {
+          "description": "Log file rotation period to use when log file path provided\n[default: Hourly]",
+          "$ref": "#/$defs/LogRotationKind"
+        }
+      }
+    },
+    "LogRotationKind": {
+      "type": "string",
+      "enum": [
+        "Minutely",
+        "Hourly",
+        "Daily",
+        "Never"
+      ]
+    },
+    "OperationSource": {
+      "description": "Source for loaded operations",
+      "oneOf": [
+        {
+          "description": "Load operations from a GraphOS collection",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "const": "collection"
+            }
+          },
+          "required": [
+            "source",
+            "id"
+          ]
+        },
+        {
+          "description": "Infer where to load operations based on other configuration options.\n\nNote: This setting tries to load the operations from introspection, if enabled\nor from the default operation collection when APOLLO_GRAPH_REF is set.",
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "const": "infer"
+            }
+          },
+          "required": [
+            "source"
+          ]
+        },
+        {
+          "description": "Load operations by introspecting the schema\n\nNote: Requires introspection to be enabled",
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "const": "introspect"
+            }
+          },
+          "required": [
+            "source"
+          ]
+        },
+        {
+          "description": "Load operations from local GraphQL files / folders",
+          "type": "object",
+          "properties": {
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source": {
+              "type": "string",
+              "const": "local"
+            }
+          },
+          "required": [
+            "source",
+            "paths"
+          ]
+        },
+        {
+          "description": "Load operations from a persisted queries manifest file",
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "const": "manifest"
+            }
+          },
+          "required": [
+            "source",
+            "path"
+          ]
+        },
+        {
+          "description": "Load operations from uplink manifest",
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "const": "uplink"
+            }
+          },
+          "required": [
+            "source"
+          ]
+        }
+      ]
+    },
+    "Overrides": {
+      "description": "Overridable flags",
+      "type": "object",
+      "properties": {
+        "disable_type_description": {
+          "description": "Disable type descriptions to save on context-window space",
+          "type": "boolean",
+          "default": false
+        },
+        "disable_schema_description": {
+          "description": "Disable schema descriptions to save on context-window space",
+          "type": "boolean",
+          "default": false
+        },
+        "enable_explorer": {
+          "description": "Expose a tool that returns the URL to open a GraphQL operation in Apollo Explorer (requires APOLLO_GRAPH_REF)",
+          "type": "boolean",
+          "default": false
+        },
+        "mutation_mode": {
+          "description": "Set the mutation mode access level for the MCP server",
+          "$ref": "#/$defs/MutationMode",
+          "default": "none"
+        }
+      }
+    },
+    "MutationMode": {
+      "oneOf": [
+        {
+          "description": "Don't allow any mutations",
+          "type": "string",
+          "const": "none"
+        },
+        {
+          "description": "Allow explicit mutations, but don't allow the LLM to build them",
+          "type": "string",
+          "const": "explicit"
+        },
+        {
+          "description": "Allow the LLM to build mutations",
+          "type": "string",
+          "const": "all"
+        }
+      ]
+    },
+    "SchemaSource": {
+      "description": "Source for upstream GraphQL schema",
+      "oneOf": [
+        {
+          "description": "Schema should be loaded (and watched) from a local file path",
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string",
+              "const": "local"
+            }
+          },
+          "required": [
+            "source",
+            "path"
+          ]
+        },
+        {
+          "description": "Fetch the schema from uplink",
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "const": "uplink"
+            }
+          },
+          "required": [
+            "source"
+          ]
+        }
+      ]
+    },
+    "Transport": {
+      "oneOf": [
+        {
+          "description": "Use standard IO for server <> client communication",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "stdio"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "description": "Host the MCP server on the supplied configuration, using SSE for communication\n\nNote: This is deprecated in favor of HTTP streams.",
+          "type": "object",
+          "properties": {
+            "auth": {
+              "description": "Authentication configuration",
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Config"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "address": {
+              "description": "The IP address to bind to",
+              "type": "string",
+              "format": "ip",
+              "default": "127.0.0.1"
+            },
+            "port": {
+              "description": "The port to bind to",
+              "type": "integer",
+              "format": "uint16",
+              "minimum": 0,
+              "maximum": 65535,
+              "default": 5000
+            },
+            "type": {
+              "type": "string",
+              "const": "sse"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "description": "Host the MCP server on the configuration, using streamable HTTP messages.",
+          "type": "object",
+          "properties": {
+            "auth": {
+              "description": "Authentication configuration",
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Config"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "address": {
+              "description": "The IP address to bind to",
+              "type": "string",
+              "format": "ip",
+              "default": "127.0.0.1"
+            },
+            "port": {
+              "description": "The port to bind to",
+              "type": "integer",
+              "format": "uint16",
+              "minimum": 0,
+              "maximum": 65535,
+              "default": 5000
+            },
+            "type": {
+              "type": "string",
+              "const": "streamable_http"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        }
+      ]
+    },
+    "Config": {
+      "description": "Auth configuration options",
+      "type": "object",
+      "properties": {
+        "servers": {
+          "description": "List of upstream OAuth servers to delegate auth",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "audiences": {
+          "description": "List of accepted audiences for the OAuth tokens",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "description": "The resource to protect.\n\nNote: This is usually the publicly accessible URL of this running MCP server",
+          "type": "string",
+          "format": "uri"
+        },
+        "resource_documentation": {
+          "description": "Link to documentation related to the protected resource",
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "scopes": {
+          "description": "Supported OAuth scopes by this resource server",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disable_auth_token_passthrough": {
+          "description": "Whether to disable the auth token passthrough to upstream API",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "servers",
+        "audiences",
+        "resource",
+        "scopes"
+      ]
+    }
+  }
+}

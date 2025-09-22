@@ -1,8 +1,8 @@
 services:
   - type: web
-    name: apollo-router
+    name: apollo-mcp-server
     runtime: docker
-    repo: https://github.com/apollographql/router-template
+    repo: https://github.com/apollographql/mcp-server-template
     plan: free
     envVars:
       - key: APOLLO_GRAPH_REF

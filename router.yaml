@@ -1,0 +1,47 @@
+# The runtime container comes with sensible defaults that work well for most use cases.
+# Uncomment the COPY and CMD lines in the Dockerfile to use this configuration.
+
+sandbox:
+  enabled: false
+supergraph:
+  introspection: true
+  listen: 0.0.0.0:${env.PORT:-4000}
+  query_planning:
+    cache:
+      in_memory:
+        limit: 512 # This is the default value
+homepage:
+  enabled: false
+include_subgraph_errors:
+  all: true
+
+cors:
+  # WARNING: allow_any_origin: true is NOT safe for production!
+  # This setting allows requests from any origin, which can lead to security vulnerabilities.
+  # 
+  # For development/testing: Keep as-is for quick experimentation
+  # For production: Replace with specific origins like:
+  #
+  # origins:
+  #   - "https://yourdomain.com"
+  #   - "https://app.yourdomain.com"
+  #   - "https://admin.yourdomain.com"
+  #
+  # You can also use environment variables:
+  # origins:
+  #   - "${env.FRONTEND_URL}"
+  #   - "${env.ADMIN_URL}"
+  allow_any_origin: true
+
+limits:
+  parser_max_tokens: 15000 # This is the default value.
+  parser_max_recursion: 4096 # This is the default value.
+  max_depth: 100 # Must be 15 or larger to support standard introspection query
+  max_height: 200
+  max_aliases: 30
+  max_root_fields: 20
+
+telemetry:
+  instrumentation:
+    spans:
+      mode: spec_compliant

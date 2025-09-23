@@ -4,7 +4,7 @@ on:
       - Dockerfile
 jobs:
   update_schema:
-    name: Update Router Config JSON Schema
+    name: Update MCP Server Config JSON Schema
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -13,14 +13,14 @@ jobs:
       - name: Build Docker image
         run: docker build -t runtime .
       - name: Update Config JSON Schema
-        run: docker run --rm --entrypoint /opt/router runtime config schema > router_config.schema.json
+        run: docker run --rm --entrypoint /opt/mcp-server runtime config schema > mcp.config.schema.json
       - name: Check if anything changed
-        run: git diff --exit-code .apollo/router_config_schema.json
+        run: git diff --exit-code .apollo/mcp.config.schema.json
       - name: Commit and push changes
         if: ${{ failure() }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .apollo/router_config_schema.json
-          git commit -m "Update router config schema"
+          git add .apollo/mcp.config.schema.json
+          git commit -m "Update MCP Server config schema"
           git push

@@ -1,5 +1,5 @@
 # renovate: datasource=docker depName=ghcr.io/apollographql/apollo-mcp-server extractVersion=^[^_]+
-FROM ghcr.io/apollographql/apollo-mcp-server:v0.8.0
+FROM ghcr.io/apollographql/apollo-mcp-server:v1.0.0
 
 COPY mcp.yaml /mcp.yaml
 
